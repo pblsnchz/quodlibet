@@ -209,6 +209,9 @@ INITIAL = {
         # scrollbar does not fade out when inactive
         "scrollbar_always_visible":
             "true" if (is_osx() or is_windows()) else "false",
+
+        # Force fontconfig as PangoCairo backend
+        "pangocairo_force_fontconfig": False,
     },
 
     "rename": {
@@ -238,6 +241,9 @@ INITIAL = {
     "editing": {
         # characters to split tags on
         "split_on": "/ & ,",
+
+        # characters used when extracting subtitles/subtags
+        "sub_split_on": "\u301c\u301c \uff08\uff09 [] () ~~ --",
 
         # ID3 encodings to try
         "id3encoding": "",
