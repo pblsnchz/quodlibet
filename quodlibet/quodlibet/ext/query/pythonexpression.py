@@ -29,7 +29,7 @@ class PythonQuery(QueryPlugin):
     def __init__(self):
         print_d("Initialising")
         self._globals = {'random': random, 'Random': random.Random,
-                         'time': time}
+                         'time': time, '_ctr_': 0}
         self._reported = set()
         self._raw_body = None
 
@@ -38,6 +38,8 @@ class PythonQuery(QueryPlugin):
             self._globals['s'] = data
             # Albums can be queried too...
             self._globals['a'] = data
+            # Add our counter
+            self._globals['_ctr_'] = self._globals['_ctr_'] + 1
             # eval modifies the globals in place, it seems
             ret = eval(body, dict(self._globals))
             return ret
@@ -58,6 +60,7 @@ class PythonQuery(QueryPlugin):
         self._reported.clear()
         try:
             self._globals.update(_ts=time.time())
+            self._globals.update(_ctr_=0)
             return compile(body.strip(), 'query', 'eval')
         except SyntaxError as e:
             print_w("Couldn't compile query (%s)" % e)
