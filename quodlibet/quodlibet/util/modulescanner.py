@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2012,2013 Christoph Reiter
 #
 # This program is free software; you can redistribute it and/or modify
@@ -94,7 +93,7 @@ class ModuleScanner(object):
 
         # get what is there atm
         for folder in self.__folders:
-            for name, path, deps in get_importables(folder, True):
+            for name, path, deps in get_importables(folder):
                 # take the basename as module key, later modules win
                 info[name] = (path, deps)
 

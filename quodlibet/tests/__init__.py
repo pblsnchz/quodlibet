@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -203,6 +202,7 @@ def init_test_environ():
 
     # set to new default
     environ.pop("XDG_DATA_HOME", None)
+    environ.pop("XDG_CONFIG_HOME", None)
 
     # don't use dconf
     environ["GSETTINGS_BACKEND"] = "memory"

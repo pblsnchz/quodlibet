@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2014 Christoph Reiter <reiter.christoph@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -271,7 +270,7 @@ class MPDService(object):
     def setvol(self, value):
         """value: 0..100"""
 
-        self._app.player.volume = (value / 100.0) ** 3.0
+        self._app.player.volume_cubic = value / 100.0
 
     def repeat(self, value):
         self._options.repeat = value
@@ -309,7 +308,7 @@ class MPDService(object):
             state = "stop"
 
         status = [
-            ("volume", int((app.player.volume ** (1.0 / 3.0)) * 100)),
+            ("volume", int(app.player.volume_cubic * 100)),
             ("repeat", int(self._options.repeat)),
             ("random", int(self._options.shuffle)),
             ("single", int(self._options.single)),

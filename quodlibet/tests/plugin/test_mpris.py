@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2012,2013 Christoph Reiter <reiter.christoph@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -44,6 +43,8 @@ MAX_TIME = 3
 @skipUnless(dbus, "no dbus")
 class TMPRIS(PluginTestCase):
 
+    BUS_NAME = "org.mpris.MediaPlayer2.quodlibet"
+
     def setUp(self):
         self.plugin = self.plugins["mpris"].cls
 
@@ -62,9 +63,9 @@ class TMPRIS(PluginTestCase):
     def tearDown(self):
         bus = dbus.SessionBus()
         self.failUnless(
-            bus.name_has_owner("org.mpris.quodlibet"))
+            bus.name_has_owner(self.BUS_NAME))
         self.m.disabled()
-        self.failIf(bus.name_has_owner("org.mpris.quodlibet"))
+        self.failIf(bus.name_has_owner(self.BUS_NAME))
 
         destroy_fake_app()
         config.quit()
@@ -72,29 +73,29 @@ class TMPRIS(PluginTestCase):
 
     def test_name_owner(self):
         bus = dbus.SessionBus()
-        self.failUnless(bus.name_has_owner("org.mpris.quodlibet"))
+        self.failUnless(bus.name_has_owner(self.BUS_NAME))
 
     def _main_iface(self):
         bus = dbus.SessionBus()
-        obj = bus.get_object("org.mpris.quodlibet", "/org/mpris/MediaPlayer2")
+        obj = bus.get_object(self.BUS_NAME, "/org/mpris/MediaPlayer2")
         return dbus.Interface(obj,
                               dbus_interface="org.mpris.MediaPlayer2")
 
     def _prop(self):
         bus = dbus.SessionBus()
-        obj = bus.get_object("org.mpris.quodlibet", "/org/mpris/MediaPlayer2")
+        obj = bus.get_object(self.BUS_NAME, "/org/mpris/MediaPlayer2")
         return dbus.Interface(obj,
                               dbus_interface="org.freedesktop.DBus.Properties")
 
     def _player_iface(self):
         bus = dbus.SessionBus()
-        obj = bus.get_object("org.mpris.quodlibet", "/org/mpris/MediaPlayer2")
+        obj = bus.get_object(self.BUS_NAME, "/org/mpris/MediaPlayer2")
         return dbus.Interface(obj,
                               dbus_interface="org.mpris.MediaPlayer2.Player")
 
     def _introspect_iface(self):
         bus = dbus.SessionBus()
-        obj = bus.get_object("org.mpris.quodlibet", "/org/mpris/MediaPlayer2")
+        obj = bus.get_object(self.BUS_NAME, "/org/mpris/MediaPlayer2")
         return dbus.Interface(
             obj, dbus_interface="org.freedesktop.DBus.Introspectable")
 
@@ -171,6 +172,21 @@ class TMPRIS(PluginTestCase):
             resp = self._wait(msg="for key '%s'" % key)[0]
             self.failUnlessEqual(resp, value)
             self.failUnless(isinstance(resp, type(value)))
+
+    def test_volume_property(self):
+        args = {"reply_handler": self._reply, "error_handler": self._error}
+        piface = "org.mpris.MediaPlayer2.Player"
+
+        def get_volume():
+            self._prop().Get(piface, "Volume", **args)
+            return float(self._wait()[0])
+
+        assert get_volume() == 1.0
+        app.player.volume_cubic = 0.5
+        assert get_volume() == 0.5
+        self._prop().Set(piface, "Volume", 0.25, **args)
+        self._wait()
+        assert app.player.volume_cubic == 0.25
 
     def test_metadata(self):
         args = {"reply_handler": self._reply, "error_handler": self._error}

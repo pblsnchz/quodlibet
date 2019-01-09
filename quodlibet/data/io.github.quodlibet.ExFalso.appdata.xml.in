@@ -5,7 +5,7 @@
     <name>Ex Falso</name>
     <summary>Edit tags in your audio files</summary>
     <metadata_license>CC0</metadata_license>
-    <project_license>GPL-2.0</project_license>
+    <project_license>GPL-2.0-or-later</project_license>
     <translation type="gettext">quodlibet</translation>
     <launchable type="desktop-id">io.github.quodlibet.ExFalso.desktop</launchable>
     <provides>
@@ -33,6 +33,7 @@
     </screenshots>
 
     <releases>
+        <release version="4.2.1" date="2018-12-26"/>
         <release version="4.2.0" date="2018-10-31"/>
         <release version="4.1.0" date="2018-06-03"/>
         <release version="4.0.2" date="2018-01-17"/>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2013 Christoph Reiter
 #
 # This program is free software; you can redistribute it and/or modify
@@ -159,6 +158,15 @@ class TPlayerMixin(object):
         self.assertEqual(self.player.volume, 0.0)
         self.player.volume = 0.5
         self.assertEqual(self.player.volume, 0.5)
+
+    def test_volume_cubic(self):
+        self.player.volume = 1
+        assert self.player.volume_cubic == 1
+        self.player.volume = 0
+        assert self.player.volume_cubic == 0
+        self.player.volume_cubic = 0.5
+        assert self.player.volume_cubic == 0.5
+        assert self.player.volume == 0.125
 
     def test_remove(self):
         self.player.remove(None)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2004-2005 Joe Wreschnig, Michael Urman, Iñigo Serna
 #           2012 Christoph Reiter
 #           2016,18 Nick Boultbee
@@ -34,10 +33,7 @@ def init():
         return
 
     this_dir = util.get_module_dir()
-    load_pyc = util.is_windows() or util.is_osx()
-    modules = load_dir_modules(this_dir,
-                               package=__package__,
-                               load_compiled=load_pyc)
+    modules = load_dir_modules(this_dir, package=__package__)
 
     for browser in modules:
         try:

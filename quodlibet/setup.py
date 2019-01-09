@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Copyright 2010-2015 Christoph Reiter
 #           2015 Nick Boultbee
 #           2010 Steven Robertson
@@ -77,7 +76,7 @@ def main():
         'author': "Joe Wreschnig, Michael Urman, & others",
         'author_email': "quod-libet-development@googlegroups.com",
         'maintainer': "Steven Robertson and Christoph Reiter",
-        'license': "GNU GPL v2",
+        'license': "GPL-2.0-or-later",
         'packages': packages,
         'package_data': {
             "quodlibet": [
@@ -94,7 +93,7 @@ def main():
         'po_package': "quodlibet",
         'shortcuts': [
             "data/io.github.quodlibet.QuodLibet.desktop",
-            "data/io.github.quodlibet.QuodLibet.desktop"
+            "data/io.github.quodlibet.ExFalso.desktop"
         ],
         'dbus_services': [
             "data/net.sacredchao.QuodLibet.service",
@@ -104,7 +103,7 @@ def main():
         ],
         'appdata': [
             "data/io.github.quodlibet.QuodLibet.appdata.xml",
-            "data/io.github.quodlibet.QuodLibet.appdata.xml",
+            "data/io.github.quodlibet.ExFalso.appdata.xml",
         ],
         'man_pages': [
             "data/quodlibet.1",
