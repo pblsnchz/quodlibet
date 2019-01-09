@@ -156,6 +156,7 @@ class SongTracker(object):
                 self.__changed(librarian, song)
             elif pl.current is not song:
                 if not player.error:
+                    song["~#lastskipped"] = int(time.time())
                     song["~#skipcount"] = song.get("~#skipcount", 0) + 1
                     self.__changed(librarian, song)
         else:

@@ -40,14 +40,14 @@ from ._misc import AudioFileError, translate_errors
 translate_errors
 
 MIGRATE = {"~#playcount", "~#laststarted", "~#lastplayed", "~#added",
-           "~#skipcount", "~#rating", "~bookmark"}
+           "~#skipcount", "~#lastskipped", "~#rating", "~bookmark"}
 """These get migrated if a song gets reloaded"""
 
 PEOPLE = ["artist", "albumartist", "author", "composer", "~performers",
           "originalartist", "lyricist", "arranger", "conductor"]
 """Sources of the ~people tag, most important first"""
 
-TIME_TAGS = {"~#lastplayed", "~#laststarted", "~#added", "~#mtime"}
+TIME_TAGS = {"~#lastplayed", "~#laststarted", "~#lastskipped", "~#added", "~#mtime"}
 """Time in seconds since epoch, defaults to 0"""
 
 SIZE_TAGS = {"~#filesize"}
@@ -58,6 +58,16 @@ NUMERIC_ZERO_DEFAULT = {"~#skipcount", "~#playcount", "~#length", "~#bitrate"}
 
 NUMERIC_ZERO_DEFAULT.update(TIME_TAGS)
 NUMERIC_ZERO_DEFAULT.update(SIZE_TAGS)
+
+#NUMERIC_ZERO_DEFAULT.update({"~#average_loudness", "~#beats_count",
+#                             "~#chords_changes_rate", "~#chords_number_rate",
+#                             "~#danceable", "~#dynamic_complexity",
+#                             "~#key_strength", "~#mood_acoustic",
+#                             "~#mood_aggressive", "~#mood_electronic",
+#                             "~#mood_happy", "~#mood_party", "~#mood_relaxed",
+#                             "~#mood_sad", "~#onset_rate", "~#timbre",
+#                             "~#tonal", "~#tuning_diatonic_strength",
+#                             "~#tuning_frequency"})
 
 FILESYSTEM_TAGS = {"~filename", "~basename", "~dirname", "~mountpoint"}
 """Values are bytes in Linux instead of unicode"""
