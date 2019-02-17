@@ -12,7 +12,7 @@ cd "${DIR}"
 
 # CONFIG START
 
-ARCH="i686"
+ARCH="x86_64"
 BUILD_VERSION="0"
 
 # CONFIG END
@@ -36,7 +36,7 @@ function set_build_root {
 set_build_root "${DIR}/_build_root"
 
 function build_pacman {
-    pacman --root "${BUILD_ROOT}" "$@"
+    pacman --cachedir "/var/cache/pacman/pkg" --root "${BUILD_ROOT}" "$@"
 }
 
 function build_pip {
@@ -47,8 +47,12 @@ function build_python {
     "${BUILD_ROOT}"/"${MINGW}"/bin/python3.exe "$@"
 }
 
+function build_compileall_pyconly {
+    MSYSTEM= build_python -m compileall --invalidation-mode unchecked-hash -b "$@"
+}
+
 function build_compileall {
-    MSYSTEM= build_python -m compileall -b "$@"
+    MSYSTEM= build_python -m compileall --invalidation-mode unchecked-hash "$@"
 }
 
 function install_pre_deps {
@@ -77,7 +81,6 @@ function extract_installer {
 
 function install_deps {
     build_pacman --noconfirm -S \
-        git \
         mingw-w64-"${ARCH}"-gettext \
         mingw-w64-"${ARCH}"-gdk-pixbuf2 \
         mingw-w64-"${ARCH}"-librsvg \
@@ -100,9 +103,9 @@ function install_deps {
     PIP_REQUIREMENTS="\
 feedparser==5.2.1
 musicbrainzngs==0.6
-mutagen==1.41.1
+mutagen==1.42.0
 pycodestyle==2.4.0
-pyflakes==2.0.0
+pyflakes==2.1.0
 "
 
     build_pip install --no-deps --no-binary ":all:" --upgrade \
@@ -173,15 +176,6 @@ function cleanup_before {
     "${MINGW_ROOT}"/bin/gtk-update-icon-cache-3.0.exe \
         "${MINGW_ROOT}"/share/icons/hicolor
 
-    # fontconfig settings
-    cat >"${MINGW_ROOT}/etc/gtk-3.0/settings.ini" <<EOL
-[Settings]
-gtk-xft-antialias=1
-gtk-xft-hinting=1
-gtk-xft-hintstyle=hintfull
-gtk-xft-rgba=rgb
-EOL
-
     # python related, before installing quodlibet
     rm -Rf "${MINGW_ROOT}"/lib/python3.*/test
     rm -f "${MINGW_ROOT}"/lib/python3.*/lib-dynload/_tkinter*
@@ -192,10 +186,10 @@ EOL
 
     find "${MINGW_ROOT}"/bin -name "*.pyo" -exec rm -f {} \;
     find "${MINGW_ROOT}"/bin -name "*.pyc" -exec rm -f {} \;
-    find "${MINGW_ROOT}" -type d -name "__pycache__" -prune -exec rm -rf {} \;
 
-    build_compileall -d "" -f -q "$(cygpath -w "${MINGW_ROOT}")"
+    build_compileall_pyconly -d "" -f -q "$(cygpath -w "${MINGW_ROOT}")"
     find "${MINGW_ROOT}" -name "*.py" -exec rm -f {} \;
+    find "${MINGW_ROOT}" -type d -name "__pycache__" -prune -exec rm -rf {} \;
 }
 
 function cleanup_after {
@@ -285,6 +279,7 @@ function cleanup_after {
     rm -f "${MINGW_ROOT}"/lib/gstreamer-1.0/libgstrtmp.dll
     rm -f "${MINGW_ROOT}"/lib/gstreamer-1.0/libgstzbar.dll
     rm -f "${MINGW_ROOT}"/lib/gstreamer-1.0/libgstfdkaac.dll
+    rm -f "${MINGW_ROOT}"/lib/gstreamer-1.0/libgstaom.dll
 
     rm -f "${MINGW_ROOT}"/bin/libharfbuzz-icu-0.dll
     rm -f "${MINGW_ROOT}"/lib/gstreamer-1.0/libgstcacasink.dll
@@ -322,7 +317,6 @@ function cleanup_after {
 
     find "${MINGW_ROOT}"/bin -name "*.pyo" -exec rm -f {} \;
     find "${MINGW_ROOT}"/bin -name "*.pyc" -exec rm -f {} \;
-    find "${MINGW_ROOT}" -type d -name "__pycache__" -prune -exec rm -rf {} \;
 
     build_python "${MISC}/depcheck.py" --delete
 
@@ -335,13 +329,12 @@ function build_installer {
     echo 'BUILD_TYPE = u"windows"' >> "$BUILDPY"
     echo "BUILD_VERSION = $BUILD_VERSION" >> "$BUILDPY"
     (cd "$REPO_CLONE" && echo "BUILD_INFO = u\"$(git rev-parse --short HEAD)\"" >> "$BUILDPY")
-    (cd $(dirname "$BUILDPY") && build_compileall -d "" -q -f -l .)
-    rm -f "$BUILDPY"
+    build_compileall -d "" -q -f "$BUILDPY"
 
     cp misc/quodlibet.ico "${BUILD_ROOT}"
-    (cd "$BUILD_ROOT" && makensis -NOCD -DVERSION="$QL_VERSION_DESC" "${MISC}"/win_installer.nsi)
+    (cd "${MINGW_ROOT}" && makensis -NOCD -DVERSION="$QL_VERSION_DESC" "${MISC}"/win_installer.nsi)
 
-    mv "$BUILD_ROOT/quodlibet-LATEST.exe" "$DIR/quodlibet-$QL_VERSION_DESC-installer.exe"
+    mv "${MINGW_ROOT}/quodlibet-LATEST.exe" "$DIR/quodlibet-$QL_VERSION_DESC-installer.exe"
 }
 
 function build_portable_installer {
@@ -350,8 +343,7 @@ function build_portable_installer {
     echo 'BUILD_TYPE = u"windows-portable"' >> "$BUILDPY"
     echo "BUILD_VERSION = $BUILD_VERSION" >> "$BUILDPY"
     (cd "$REPO_CLONE" && echo "BUILD_INFO = u\"$(git rev-parse --short HEAD)\"" >> "$BUILDPY")
-    (cd $(dirname "$BUILDPY") && build_compileall -d "" -q -f -l .)
-    rm -f "$BUILDPY"
+    build_compileall -d "" -q -f "$BUILDPY"
 
     local PORTABLE="$DIR/quodlibet-$QL_VERSION_DESC-portable"
 
