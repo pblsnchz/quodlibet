@@ -65,7 +65,7 @@ class MinVersions(object):
     GSTREAMER = Version("GStreamer", 1, 8)
 
 
-VERSION_TUPLE = Version("", 4, 3, -1)
+VERSION_TUPLE = Version("", 4, 4, -1)
 VERSION = str(VERSION_TUPLE)
 
 # entry point for the user guide / wiki
@@ -82,7 +82,7 @@ SUPPORT_EMAIL = "quod-libet-development@googlegroups.com"
 
 # about dialog, --version etc.
 WEBSITE = "https://quodlibet.readthedocs.org/"
-COPYRIGHT = u"Copyright 2004-2018"
+COPYRIGHT = u"Copyright 2004-2019"
 
 AUTHORS = sorted(u"""\
 Alexandre Passos
